@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+</head>
+<body>
+    <div class='container'>
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <br class="x_panel">
+                <div class="x_title">
+                    <h1 align="center"><i class="fa fa-bars"></i> 使用说明 </h1>
+                </div>
+                <div class="x_content">
+                    <div>
+                        <h3>主页简介</h3>
+                        <h1><a href="#"><img src="/images/mainpage_instruction.png" alt="主页简介" /></a></h1>
+                        </br>
+                    </div>
+                    <div>
+                        <h3>各角色的操作权限</h3>
+                        <table class="table table-hover" frame="box" rules="all" width="70%">
+                            <thead>
+                                <th width="15%"></th>
+                                <th width="20%">系统管理员admin</th>
+                                <th width="25%">项目经理Project manager</th>
+                                <th width="20%">参试人员doctor</th>
+                                <th width="20%">统计员statistician</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>人员机构管理</td>
+                                    <td>新建、查看、修改所有机构、人员</td>
+                                    <td>新建所有机构、人员，查看、修改本项目相关的（属于项目的申办机构、临床研究机构列表的）机构、人员</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>项目管理</td>
+                                    <td>新建、查看、修改所有项目</td>
+                                    <td>查看、修改本项目；<br>权限设置；<br>切换项目</td>
+                                    <td>切换项目</td>
+                                    <td>切换项目</td>
+                                </tr>
+                                <tr>
+                                    <td>随机管理</td>
+                                    <td></td>
+                                    <td>揭盲</td>
+                                    <td>取号；<br>查看取号结果</td>
+                                    <td>随机设置；<br>揭盲</td>
+                                </tr>
+                                <tr>
+                                    <td>设置</td>
+                                    <td>关于；<br>帮助；<br>退出</td>
+                                    <td>修改密码；<br>修改个人资料；<br>关于；<br>帮助；<br>退出</td>
+                                    <td>修改密码；<br>修改个人资料；<br>关于；<br>帮助；<br>退出</td>
+                                    <td>修改密码；<br>修改个人资料；<br>关于；<br>帮助；<br>退出</td>
+                                </tr>
+                                <tr>
+                                    <td>主页</td>
+                                    <td>回到首页</td>
+                                    <td>回到首页；<br>取号统计信息；<br>最近操作；<br>项目描述</td>
+                                    <td>回到首页；<br>取号统计信息；<br>最近操作；<br>项目描述</td>
+                                    <td>回到首页；<br>取号统计信息；<br>最近操作；<br>项目描述</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </br>
+                    </div>
+                    <div>
+                        <h3>系统操作实例（BVT场景用例）</h3>
+                        <span>
+                            第1步：admin/admin登录系统，新建机构org1, org2, org3；新建人员user1(机构=org1), user2(机构=org2), user3(机构=org3)，user4（机构=org3）；新建项目project1(项目经理=user1, 主办单位=org1, 临床研究单位=org2, org3). 退出。</br>
+                            第2步：user1（项目经理）登录，项目管理-->权限设置，设参试人员=user2, user3,统计员=user4.退出。</br>
+                            第3步：user4(统计员)登录，随机管理-->随机设置，退出。</br>
+                            第4步：user2(参试人员)登录，随机管理-->取号，查看取号结果，退出。</br>
+                            第5步：user4(统计员)登录，随机管理-->揭盲，下载结果到本地，退出。</br>
+                            第6步：admin登录，创建project2，项目经理设置为user3，重置user3的密码，退出。</br>
+                            第7步：user3(参试人员)登录（密码是123456），项目管理-->切换项目，修改密码，修改个人资料，回到首页。</br>
+                        </span>
+                    </br>
+                    </div>
+                    <div>
+                        <h3>操作细节</h3>
+                        <span>
+                            1. 1个人员可以在多个项目中有权限，在同一项目中可以有多个普通权限（project manager, doctor, statistician）。</br>
+                            2. 1个项目可以有1个申办单位和多个临床研究单位。</br>
+                            3. 若该项目已经进行了随机设置，不管是否取号，修改项目时临床研究单位列表不可编辑；若未设置过随机，则可以编辑修改。</br>
+                            4. 项目经理的权限是在admin新建、修改项目时指定的，而参试人员、统计员的权限是项目经理在“权限设置”中指定的；新增加的人员激活状态都是“未激活”，不能登录，只有在其被项目经理指定权限后，状态才会变更为“已激活”并可以正常登录。</br>
+                            5. “随机设置”页面，若从未设置过则显示wizard设置项，若已设置显示的是设置的结果。</br>
+                            6. “取号”页面，若随机设置了分层，取号页面会显示分层项，否则不显示。</br>
+                            7. 每个人可以修改个人基本信息或密码，若忘记密码，admin可以重置为密码123456。</br>
+                            8. 最近操作显示的是数据库中最近的20条记录，滚动显示。</br>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

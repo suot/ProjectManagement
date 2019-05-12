@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Organization Management</title>
+</head>
+<body>
+<!--list_all_organizations-->
+<div th:fragment="list_all_organizations">
+    <div class="x_panel">
+        <div class="x_content">
+            <div>
+                <button type="button" class="btn btn-primary" onclick="Organization.CreateOrganization()">新增机构</button>
+            </div>
+            <div>
+                <table id="organizationDataTable" class="display" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>机构号</th>
+                            <th>机构编码</th>
+                            <th>名称</th>
+                            <th>地址</th>
+                            <th>联系人姓名</th>
+                            <th>联系人电话</th>
+                            <th>联系部门</th>
+                            <th>属性</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal fade in" id="organizationModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-content" style="width:80%; left: 10%; top: 10%; height:80%;">
+                    <div class="modal-header">
+                        <button id="modalSwitch" type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+                        <h4 class="modal-title" id="organizationModalLabel">修改机构信息</h4>
+                    </div>
+                    <div class="modal-body" id="organizationModalBody" style="height:80%;overflow:auto;">
+                        <div id="organizationBlock"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end list_all_organizations-->
+
+
+<!--create_organization-->
+<div th:fragment="create_organization">
+    <div class="x_panel">
+        <div class="x_content">
+            <br/>
+            <form class="form-horizontal form-label-left" id="form_create_organization" name="form_create_organization" th:action="@{/organization/create/submit}" th:object="${organization}" method="post">
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">机构编码*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="organizationNumber" th:name="organizationNumber"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">名称*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="name" th:name="name"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">地址</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:field="*{address}"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">联系人姓名</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:field="*{contactName}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">联系人电话</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="contactPhone" th:name="contactPhone"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">联系部门</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:field="*{contactDepartment}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">属性*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control" th:id="property" th:name="property">
+                                <option th:each="propertyOption : ${organizationPropertyEnumValues}" th:value="${propertyOption}" th:text="${propertyOption}">属性</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                    <div class="col-md-12 col-sm-12 col-xs-12 col-md-offset-5">
+                        <button type="submit" class="btn btn-success">提交</button>
+                        <button type="reset" class="btn btn-primary reset">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end create_organization-->
+
+
+<!--modify_organization-->
+<div th:fragment="modify_organization">
+    <div class="x_panel">
+        <div class="x_content">
+            <br/>
+            <form class="form-horizontal form-label-left" id="form_modify_organization" name="form_modify_organization" th:action="@{/organization/modify/submit}" th:object="${updatedOrganization}" method="post">
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">机构号*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="id" th:name="id" th:value="${organization.getId()}" readonly="readonly"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">机构编码*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="organizationNumber" th:name="organizationNumber" th:value="${organization.getOrganizationNumber()}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">名称*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="name" th:name="name" th:value="${organization.getName()}"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">地址</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="address" th:name="address" th:value="${organization.getAddress()}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">联系人姓名</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="contactName" th:name="contactName" th:value="${organization.getContactName()}"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">联系人电话</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="contactPhone" th:name="contactPhone" th:value="${organization.getContactPhone()}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">联系部门</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="contactDepartment" th:name="contactDepartment" th:value="${organization.getContactDepartment()}"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">属性*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control" th:id="property" th:name="property">
+                                <option th:each="propertyOption : ${organizationPropertyEnumValues}" th:value="${propertyOption}" th:text="${propertyOption}" th:selected="${propertyOption} eq ${organization.getProperty()}">属性</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                    <div class="col-md-12 col-sm-12 col-xs-12 col-md-offset-5">
+                        <button type="submit" class="btn btn-success">提交</button>
+                        <button type="reset" class="btn btn-primary reset">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end modify_organization-->
+
+</body>
+</html>

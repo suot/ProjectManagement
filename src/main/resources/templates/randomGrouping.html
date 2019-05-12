@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+</head>
+<body>
+    <!--受试者随机（设置）-->
+    <div class='container' th:fragment="randomGrouping" id="randomGrouping">
+        <section id="wizard">
+            <form id="commentForm" class="form-horizontal" th:action="@{/random/generate}" method="post">
+                <div id="rootwizard">
+                    <ul>
+                        <li><a href="#tab1" data-toggle="tab">随机基本参数</a></li>
+                        <li><a href="#tab2" data-toggle="tab">实验分组</a></li>
+                        <li><a href="#tab3" data-toggle="tab">中心设置</a></li>
+                        <li><a href="#tab4" data-toggle="tab">分层设置</a></li>
+                        <li><a href="#tab5" data-toggle="tab">随机序号</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <!--基本参数-->
+                        <div class="tab-pane" id="tab1">
+                            <!--盲态设置-->
+                            <div class="control-group">
+                                <div class="row">
+                                    <label class="control-label col-md-4" for="blind_type">盲态设置</label>
+                                    <div class="controls col-md-4">
+                                        <select class="form-control" id="blind_type" name="blind_type">
+                                            <option value="no_blind" selected="selected">开放</option>
+                                            <option value="single_blind">单盲</option>
+                                            <option value="double_blind">双盲</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end 盲态设置-->
+                            <!--揭盲负责人-->
+                            <div class="control-group">
+                                <div class="row">
+                                    <label class="control-label col-md-4" for="unblind_mgr">揭盲负责人</label>
+                                    <div class="controls col-md-4">
+                                        <input type="text" id="unblind_mgr" name="unblind_mgr" th:value="${investigatorId}" readonly="readonly"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end 揭盲负责人-->
+                            <!--样本量-->
+                            <div class="control-group">
+                                <div class="row">
+                                    <label class="control-label col-md-4" for="simple_size">样本量</label>
+                                    <div class="controls col-md-4">
+                                        <input type="text" id="simple_size" name="simple_size" placeholder="请输入正整数"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end 样本量-->
+                            <!--是否控制项目受试者-->
+                            <div class="control-group">
+                                <div class="row">
+                                    <label class="control-label col-md-4" for="is_ctrl_subenroll">是否控制项目受试者</label>
+                                    <div class="controls col-md-4">
+                                        <select class="form-control" id="is_ctrl_subenroll" name="is_ctrl_subenroll">
+                                            <option value="yes" selected="selected">是</option>
+                                            <option value="no" >否</option>
+                                            <!--<option value="force" >强制</option>-->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end 是否控制项目受试者-->
+                            <!--随机种子-->
+                            <div class="control-group">
+                                <div class="row">
+                                    <label class="control-label col-md-4" for="random_seed">随机种子</label>
+                                    <div class="controls col-md-4">
+                                        <input type="password" id="random_seed" name="random_seed" placeholder="请输入正整数">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end 随机种子-->
+                            <!--&lt;!&ndash;受试者入组时同时取药&ndash;&gt;-->
+                            <!--<div class="control-group">-->
+                            <!--<div class="row">-->
+                            <!--<label class="control-label  col-md-4" for="tsqy">受试者入组时同时取药</label>-->
+                            <!--<div class="controls  col-md-4">-->
+                            <!--<select class="form-control" id="tsqy" name="tsqy">-->
+                            <!--<option value="yes" >是</option>-->
+                            <!--<option value="no" selected="selected">否</option>-->
+                            <!--</select>-->
+                            <!--</div>-->
+
+                            <!--</div>-->
+                            <!--</div>-->
+                            <!--&lt;!&ndash;end 受试者入组时同时取药&ndash;&gt;-->
+                        </div>
+                        <!--end 基本参数-->
+                        <!--试验分组-->
+                        <div class="tab-pane" id="tab2">
+                            <!--分组信息-->
+                            <div class="control-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4>药物与试验分组信息</h4>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!--<div class="col-md-4">-->
+                                    <!--<div class="row">-->
+                                    <!--<label class="control-label  col-md-4" for="tab2_sjlx">设计类型</label>-->
+                                    <!--<div class="controls  col-md-8">-->
+                                    <!--<select class="form-control" id="tab2_sjlx" name="tab2_sjlx">-->
+                                    <!--<option value="平行设计" >平行设计</option>-->
+
+                                    <!--</select>-->
+                                    <!--</div>-->
+                                    <!--</div>-->
+                                    <!--</div>-->
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <label class="control-label col-md-4" for="tab2_simple_size">样本量</label>
+                                            <div class="controls  col-md-8">
+                                                <input type="text" id="tab2_simple_size" readonly="readonly">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="row">
+                                            <label class="control-label  col-md-4" for="num_of_group">试验组数</label>
+                                            <div class="controls  col-md-8">
+                                                <input type="text" id="num_of_group" name="num_of_group" value="2" readonly="readonly">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!--end 分组信息-->
+                            <!--分组设计-->
+                            <div class="control-group">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h4>试验分组信息</h4>
+                                    </div>
+                                </div>
+                                <table id="syfz_table" class="table">
+                                    <thead>
+                                        <th>试验组号</th>
+                                        <th>试验组名</th>
+                                        <th>分组比例</th>
+                                        <th>受试者数</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="text" name="group_type[]" placeholder="请输入试验组号" ></td>
+                                            <td><input type="text" name="group_name[]" placeholder="请输入试验组名"></td>
+                                            <td class="syfz_bl"><input type="text" name="occupy[]" class="required " placeholder="请输入正整数"></td>
+                                            <td><input type="text" name="subject_number[]" class="required" readonly="readonly"></td>
+                                        </tr>
+                                        <tr>
+                                            <td><input type="text" name="group_type[]" placeholder="请输入试验组号" ></td>
+                                            <td><input type="text" name="group_name[]" placeholder="请输入试验组名"></td>
+                                            <td class="syfz_bl"><input type="text" name="occupy[]" placeholder="请输入正整数"></td>
+                                            <td><input type="text" name="subject_number[]" class="required" readonly="readonly"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <input type="button" class="btn btn-info" name="add" id="syfz_add" value=" 添加"/>
+                                        <input type="button" class="btn btn-info" name="del" id="syfz_del" value=" 删除" disabled="disabled"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end 分组设计-->
+                        </div>
+                        <!--end 试验分组-->
+                        <!--中心设置-->
+                        <div class="tab-pane" id="tab3">
+                            <!--<div class="row">-->
+                                <!--<h4>中心设置(这页表格中中心编号和名称信息是从项目设置中读出来的)</h4>-->
+                            <!--</div>-->
+                            <div class="control-group">
+                                <div class="row">
+                                    <label class="control-label  col-md-4" for="balance_type">是否中心平衡</label>
+                                    <div class="controls  col-md-4">
+                                        <select class="form-control" id="balance_type" name="balance_type">
+                                            <option value="competitive" selected="selected">不要求平衡</option>
+                                            <option value="mixed" >相对平衡</option>
+                                            <option value="balanced" >绝对平衡</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:unless="${#lists.isEmpty(investiOrganizationInfoList)}">
+                                <table class="table">
+                                    <thead>
+                                        <th>中心编号</th>
+                                        <th>中心名称</th>
+                                        <th>中心受试者控制数(0为不控制)</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="investiOrganizationInfo:${investiOrganizationInfoList}">
+                                            <td><input type="text" name="org_id[]" th:value="${investiOrganizationInfo.getInvestiOrganization().getOrgId()}" readonly="readonly"></td>
+                                            <td><input type="text" name="org_name[]" th:value="${investiOrganizationInfo.getOrganization().getName()}" readonly="readonly"></td>
+                                            <td><input type="text" name="enroll_num[]" th:value="${investiOrganizationInfo.getInvestiOrganization().getEnrollNumber()}"></td>
+                                        </tr>
+                                        <!--<tr>-->
+                                            <!--<td><input type="text" name="org_id[]" class="required" value="2"></td>-->
+                                            <!--<td><input type="text" name="org_name[]" class="required" value="协和医院2"></td>-->
+                                            <!--<td>-->
+                                                <!--<input name="enroll_num[]" type="text"  class="required" value="0">-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!--end 中心设置-->
+                        <!--分层设置-->
+                        <div class="tab-pane" id="tab4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>分层设置</h4>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <div class="row">
+                                    <label class="control-label  col-md-4" for="is_stratifi">是否进行分层设置</label>
+                                    <div class="controls  col-md-4">
+                                        <select class="form-control" id="is_stratifi" name="is_stratifi">
+                                            <option value="yes">是</option>
+                                            <option value="no" selected="selected">否</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <table class="table" id="fenzu_table" hidden>
+                                <thead>
+                                    <tr>
+                                        <td>分层名称</td>
+                                        <td>添加分层信息</td>
+                                        <td>分层信息</td>
+                                        <td><a href="#" id="AddGroup" class="addgroup">添加分层</a></td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr groupnumber="group0" totalchild='2'>
+                                        <td class="hadspan" rowspan="2">
+                                            <input type="text" name="group0" value="输入分层名称，例如性别"/>
+                                        </td>
+                                        <td  class="hadspan" rowspan="2">
+                                            <a href="#" class="addcon">添加</a>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="group0_0" value="输入分层信息，例如男"/>
+                                        </td>
+                                        <td class="hadspan" rowspan="2"></td>
+                                    </tr>
+                                    <tr groupnumber="group0">
+                                        <td>  <input type="text" name="group0_1" value="输入分层信息，例如女"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--end 分层设置-->
+                        <!--随机序号-->
+                        <div class="tab-pane" id="tab5">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>生成随机序号</h4>
+                                </div>
+                            </div>
+                            <div class="control-group">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label class="control-label" for="tab5_simple_size">受试者总数</label>
+                                        <div class="controls">
+                                            <input type="text" id="tab5_simple_size" readonly="readonly">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="control-label " for="tab5_fzbl">分组比例</label>
+                                        <div class="controls">
+                                            <input type="text" id="tab5_fzbl" readonly="readonly">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="control-label" for="num_of_length">区段长度</label>
+                                        <div class="controls">
+                                            <input type="text" id="num_of_length" name="num_of_length" placeholder="请输入区段长度">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="control-label" for="num_of_block">区段个数</label>
+                                        <div class="controls ">
+                                            <input type="text" id="num_of_block" name="num_of_block" readonly="readonly" placeholder="区段个数">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--随机序号-->
+
+                        <ul class="pager wizard">
+                            <li class="previous"><a href="#">上一步</a></li>
+                            <li class="next"><a href="#">下一步</a></li>
+                            <li class="finish"><button type="submit" id="generateRandomButton" class="btn btn-info">生成</button></li>
+                            <!--<li class="finish"><a href="#" th:text="生成" onclick="Random.RandomGroupingSubmit()">生成</a></li>-->
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <div th:fragment="result_report" id="result_report"></div>
+        <!--<a th:href="@{/getnumber}">取号页面</a>-->
+        <!--<a th:href="@{/showsettings}">显示设置</a>-->
+        <!--<a th:href="@{/jiemang}">揭盲</a>-->
+        <!--<a th:href="@{/return_back_to_mainpage}">项目主页</a>-->
+        <!--<a th:href="@{/changeproject}">切换项目</a>-->
+    </div>
+    <!--end of randomgrouping-->
+
+    <!--（查看已设置好的）受试者随机设置的结果-->
+    <div class="container" th:fragment="randomGroupingResult" id="randomGroupingResult">
+        <div class="col-md-6 col-sm-6 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2>汇总信息<small><span th:inline="text">[[ ${project.getAbbreviation()}]]</span></small></h2>
+                </div>
+                <div class="x_content">
+                    <ul class="list-unstyled timeline">
+                        <li>
+                            <div class="block">
+                                <div class="tags">
+                                    <a href="" class="tag">
+                                        <span>基本参数</span>
+                                    </a>
+                                </div>
+                                <div class="block_content">
+                                    <h2 class="title">
+                                        <a>随机基本参数</a>
+                                    </h2>
+                                    <table class="table">
+                                        <tr><td>盲态设置</td><td><span th:inline="text">[[${randomSettings.getBlindType()}]]</span></td></tr>
+                                        <tr><td>揭盲负责人</td><td><span th:inline="text">[[${investigatorName}]]</span></td></tr>
+                                        <tr><td>样本量</td><td><span th:inline="text">[[${randomSettings.getSimpleSize()}]]</span></td></tr>
+                                        <tr><td>控制项目受试者</td><td><span th:inline="text">[[${randomSettings.getIsCtrlSubEnroll()}]]</span></td></tr>
+                                        <tr><td>随机种子</td><td><span th:inline="text">[[${randomSettings.getRandomSeed()}]]</span></td></tr>
+                                        <tr><td>区段长度</td><td><span th:inline="text">[[${randomSettings.getLengthOfBlock()}]]</span></td></tr>
+                                        <tr><td>区段数</td><td><span th:inline="text">[[${randomSettings.getNumOfBlock()}]]</span></td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="block">
+                                <div class="tags">
+                                    <a href="" class="tag">
+                                        <span>实验分组</span>
+                                    </a>
+                                </div>
+                                <div class="block_content">
+                                    <h2 class="title">
+                                        <a>分组信息</a>
+                                    </h2>
+                                    <table class="table">
+                                        <thead>
+                                        <th>试验组号</th>
+                                        <th>试验组名</th>
+                                        <th>分组比例</th>
+                                        <th>受试者数</th>
+                                        </thead>
+                                        <tbody th:unless="${#lists.isEmpty(investiGroupList)}">
+                                        <tr th:each="investiGroup:${investiGroupList}">
+                                            <td><span th:inline="text">[[${investiGroup.getGroupType()}]]</span></td>
+                                            <td><span th:inline="text">[[${investiGroup.getGroupName()}]]</span></td>
+                                            <td><span th:inline="text">[[${investiGroup.getOccupy()}]]</span></td>
+                                            <td><span th:inline="text">[[${investiGroup.getSubjectNumber()}]]</span></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="block">
+                                <div class="tags">
+                                    <a href="" class="tag">
+                                        <span>中心设置</span>
+                                    </a>
+                                </div>
+                                <div class="block_content">
+                                    <h2 class="title">
+                                        <a>中心设置</a>
+                                    </h2>
+                                    <table class="table">
+                                        <thead>
+                                        <th>中心编号</th>
+                                        <th>中心名称</th>
+                                        <th>控制中心受试者</th>
+                                        </thead>
+                                        <tbody th:unless="${#lists.isEmpty(investiOrganizationInfoList)}">
+                                        <tr th:each="investiOrganizationInfo:${investiOrganizationInfoList}">
+                                            <td><span th:inline="text">[[${investiOrganizationInfo.getOrganization().getId()}]]</span></td>
+                                            <td><span th:inline="text">[[${investiOrganizationInfo.getOrganization().getName()}]]</span></td>
+                                            <td><span th:inline="text">[[${investiOrganizationInfo.getInvestiOrganization().getEnrollNumber()}]]</span></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="block">
+                                <div class="tags">
+                                    <a href="" class="tag">
+                                        <span>分层设置</span>
+                                    </a>
+                                </div>
+                                <div class="block_content">
+                                    <h2 class="title">
+                                        <a>分层设置</a>
+                                    </h2>
+                                    <table class="table">
+                                        <thead>
+                                        <th>分层项名称</th>
+                                        <th>分层因素名称</th>
+                                        </thead>
+                                        <tbody>
+                                        <!--<div th:each="stratificationList:${stratificationMap}">-->
+                                        <tr th:each="stratification:${stratificationList}">
+                                            <td><span th:inline="text">[[${stratification.getStratifiName()}]]</span></td>
+                                            <td><span th:inline="text">[[${stratification.getStratifiFactorName()}]]</span></td>
+                                        </tr>
+                                        <!--</div>-->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of randomGroupingResult-->
+
+    <!--（根据分层）取号-->
+    <div class='container' th:fragment="stratification" id="stratification">
+        <div class="x_panel">
+            <div class="x_content">
+                <br/>
+                <form class="form-horizontal form-label-left" id="form_get_stratification" name="form_get_stratification" th:action="@{/random/getnumber}" method="post">
+                    <div>
+                        <div class="row">
+                            <div class="form-group col-md-12 col-sm-12 col-xs-12">
+                                <label class="control-label col-md-2 col-sm-12 col-xs-12">受试者姓名*</label>
+                                <div class="col-md-4 col-sm-12 col-xs-12">
+                                    <input type="text" class="form-control" id="subjectid" name="subjectid"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12 col-sm-12 col-xs-12" th:each="map:${stratificationMap}">
+                                <label class="control-label col-md-2 col-sm-12 col-xs-12"><span th:inline="text">[[${map.value.get(0).getStratifiName()}]]</span></label>
+                                <div class="col-md-4 col-sm-12 col-xs-12">
+                                    <select class="form-control" th:id="${map.key}" th:name="${map.key}" th:title="${map.key}">
+                                        <option th:each="stratification : ${map.value}" th:value="${stratification.getStratifiFactorId()}" th:title="${stratification.getStratifiFactorId()}" th:text="${stratification.getStratifiFactorName()}">选项</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="form-group">
+                        <div class="col-md-12 col-sm-12 col-xs-12 col-md-offset-4">
+                            <button type="submit" id="fetchNumberButton" class="btn btn-success">取号</button>
+                            <!--<button type="reset" id="resetButton" class="btn btn-primary">重置</button>-->
+                        </div>
+                    </div>
+                </form>
+                <div class="ln_solid" hidden></div>
+                <!--<h2><i class="fa fa-bars"></i> 取号结果 </h2>-->
+                <table class="table table-hover" style="width:60%" hidden>
+                    <thead>
+                        <th style="width:33%">状态</th>
+                        <th style="width:33%">RNID</th>
+                        <th style="width:34%" id="returnedGroupNameHead" hidden>分组名称</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="returnedStatus"></td>
+                            <td id="returnedRNID"></td>
+                            <td id="returnedGroupName"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!--end of stratification-->
+
+    <!--（医生）查看取号结果-->
+    <div class='container' th:fragment="sequenceNumberList" id="sequenceNumberList">
+        <div class="x_panel">
+            <div class="x_content">
+                <div>
+                    <table id="sequenceNumberListDataTable" class="display" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>受试者姓名</th>
+                                <th>RNID号码</th>
+                                <th>分组名称</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of sequenceNumberList-->
+
+    <!--受试者揭盲-->
+    <div class="container" th:fragment="unfoldBlindness" id="unfoldBlindness">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <h2><i class="fa fa-bars"></i> 揭盲 <small><span th:inline="text">共[[${lineCount}]]条记录</span></small></h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li><a href="/random/unfoldBlindness/download"><i class="fa fa-cloud-download"></i>下载到本地</a>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>#</th>
+                            <th>受试者</th>
+                            <th>研究者</th>
+                            <th>组号</th>
+                            <th>名称</th>
+                            <th>区块号</th>
+                            <th>块内序号</th>
+                            <th>随机序号</th>
+                            <th>取号时间</th>
+                        </thead>
+                        <tbody>
+                            <tr th:each="offerNumberResultInfo:${offerNumberResultInfoList}">
+                                <td><span th:inline="text">[[${offerNumberResultInfo.getOfferNumberResult().getId()}]]</span></td>
+                                <td><span th:inline="text">[[${offerNumberResultInfo.getOfferNumberResult().getSubjectId()}]]</span></td>
+                                <td><span th:inline="text">[[${offerNumberResultInfo.getOfferNumberResult().getInvestigatorId()}]]</span></td>
+                                <td><span th:inline="text">[[${offerNumberResultInfo.getOfferNumberResult().getGroupType()}]]</span></td>
+                                <td><span th:inline="text">[[${offerNumberResultInfo.getInvestiGroup().getGroupName()}]]</span></td>
+                                <td><span th:inline="text">[[${offerNumberResultInfo.getOfferNumberResult().getGroupNumber()}]]</span></td>
+                                <td><span th:inline="text">[[${offerNumberResultInfo.getOfferNumberResult().getOrderInGroup()}]]</span></td>
+                                <td><span th:inline="text">[[${offerNumberResultInfo.getOfferNumberResult().getRnid()}]]</span></td>
+                                <td><span th:inline="text">[[${offerNumberResultInfo.getOfferNumberResult().getOfferDate().toString().substring(0, 19)}]]</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of unfoldBlindnessResult-->
+</body>
+</html>

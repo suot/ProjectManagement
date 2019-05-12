@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Project Management</title>
+</head>
+<body>
+<!--list_all_projects-->
+<div th:fragment="list_all_projects">
+    <div class="x_panel">
+        <div class="x_content">
+            <div sec:authorize="hasAuthority('ROLE_admin')">
+                <button type="button" class="btn btn-primary" onclick="Project.CreateProject()">新增项目</button>
+            </div>
+            <div>
+                <table id="projectDataTable" class="display" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>项目号</th>
+                            <th>项目编码</th>
+                            <th>研究编号</th>
+                            <th>项目简称</th>
+                            <th>申办单位</th>
+                            <th>项目经理</th>
+                            <th>临床研究单位</th>
+                            <th>状态</th>
+                            <th>启用模块</th>
+                            <th>方案号</th>
+                            <th>批号</th>
+                            <th>伦理号</th>
+                            <th>摘要</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="modal fade in" id="projectModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-content" style="width:80%; left: 10%; top: 10%; height:80%;">
+                    <div class="modal-header">
+                        <button id="modalSwitch" type="button" class="close" data-dismiss="modal" aria-label="Close">×</button>
+                        <h4 class="modal-title" id="projectModalLabel">修改项目信息</h4>
+                    </div>
+                    <div class="modal-body" id="projectModalBody" style="height:80%;overflow:auto;">
+                        <div id="projectBlock"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end list_all_projects-->
+
+<!--create_project-->
+<div th:fragment="create_project">
+    <div class="x_panel">
+        <div class="x_content">
+            <br/>
+            <form class="form-horizontal form-label-left" id="form_create_project" name="form_create_project" th:action="@{/project/create/submit}" th:object="${project}" method="post">
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">项目编码*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="projectNumber" th:name="projectNumber"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">研究编号*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="researchId" th:name="researchId"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">项目简称*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="abbreviation" th:name="abbreviation"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">申办单位*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control" th:id="organizationId" th:name="organizationId">
+                                <option th:each="organization : ${allOrganizations}" th:value="${organization.getId()}" th:text="${organization.getName()}" th:title="'机构编码:'+${organization.getOrganizationNumber()}">申办单位</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">项目经理*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control select2-theme" id="projectManagerUserNames" name="projectManagerUserNames" multiple="multiple" th:placeholder="单击弹出机构列表">
+                                <option th:each="user : ${allUsers}" th:value="${user.getUsername()}" th:text="${user.getName()}">项目经理</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">临床研究单位*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control select2-theme" id="researchOrganizationIds" name="researchOrganizationIds" multiple="multiple" title="单击弹出机构列表">
+                                <option th:each="organization : ${allOrganizations}" th:value="${organization.getId()}" th:text="${organization.getName()}" th:title="'机构编码:'+${organization.getOrganizationNumber()}">临床研究单位</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">状态*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control" th:id="status" th:name="status">
+                                <option th:each="statusOption : ${statusEnumValues}" th:value="${statusOption}" th:text="${statusOption}">状态</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">启用模块*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control" th:id="moduleList" th:name="moduleList">
+                                <option th:each="module : ${moduleEnumValues}" th:value="${module}" th:text="${module}">启用模块</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">方案号</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:field="*{planNumber}"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">批号</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:field="*{batchNumber}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">伦理号</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:field="*{ethicNumber}"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">摘要</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:field="*{description}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                    <div class="col-md-12 col-sm-12 col-xs-12 col-md-offset-5">
+                        <button type="submit" class="btn btn-success">提交</button>
+                        <button type="reset" class="btn btn-primary reset">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end create_project-->
+
+<!--modify_project-->
+<div th:fragment="modify_project">
+    <div class="x_panel">
+        <div class="x_content">
+            <br/>
+            <form class="form-horizontal form-label-left" id="form_modify_project" name="form_modify_project" th:action="@{/project/modify/submit}" th:object="${updatedProject}" method="post">
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">项目号*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="id" th:name="id" th:value="${project.getId()}" readonly="readonly"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">项目编码*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="projectNumber" th:name="projectNumber" th:value="${project.getProjectNumber()}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">研究编号*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control"  th:id="researchId" th:name="researchId" th:value="${project.getResearchId()}"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">项目简称*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="abbreviation" th:name="abbreviation" th:value="${project.getAbbreviation()}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">申办单位*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control" th:id="organizationId" th:name="organizationId">
+                                <option th:each="organization : ${allOrganizations}" th:value="${organization.getId()}" th:text="${organization.getName()}" th:title="'机构编码:'+${organization.getOrganizationNumber()}" th:selected="${organization.getId()} eq ${orgId}">申办单位</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">项目经理*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control select2-theme" id="projectManagerUserNames" name="projectManagerUserNames" multiple="multiple" placeholder="单击弹出机构列表">
+                                <option th:each="user : ${allUsers}" th:value="${user.getUsername()}" th:text="${user.getName()}">项目经理</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">临床研究单位*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control select2-theme" id="researchOrganizationIds" name="researchOrganizationIds" multiple="multiple">
+                                <option th:each="organization : ${allOrganizations}" th:value="${organization.getId()}" th:text="${organization.getName()}" th:title="'机构编码:'+${organization.getOrganizationNumber()}">临床研究单位</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">状态*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control" th:id="status" th:name="status">
+                                <option th:each="statusOption : ${statusEnumValues}" th:value="${statusOption}" th:text="${statusOption}" th:selected="${statusOption} eq ${project.getStatus()}">状态</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">启用模块*</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <select class="form-control" th:id="moduleList" th:name="moduleList">
+                                <option th:each="module : ${moduleEnumValues}" th:value="${module}" th:text="${module}" th:selected="${module} eq ${project.getModuleList()}">启用模块</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">方案号</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="planNumber" th:name="planNumber" th:value="${project.getPlanNumber()}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">批号</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="batchNumber" th:name="batchNumber" th:value="${project.getBatchNumber()}"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">伦理号</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="ethicNumber" th:name="ethicNumber" th:value="${project.getEthicNumber()}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6 col-sm-12 col-xs-12">
+                        <label class="control-label col-md-4 col-sm-12 col-xs-12">摘要</label>
+                        <div class="col-md-8 col-sm-12 col-xs-12">
+                            <input type="text" class="form-control" th:id="description" th:name="description" th:value="${project.getDescription()}"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="ln_solid"></div>
+                <div class="form-group">
+                    <div class="col-md-12 col-sm-12 col-xs-12 col-md-offset-5">
+                        <button type="submit" class="btn btn-success">提交</button>
+                        <button type="reset" class="btn btn-primary reset">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end modify_project-->
+
+<!--change_project-->
+<div th:fragment="list_my_projects">
+    <div class="x_panel">
+        <div class="x_title">
+            <h2>我的项目</h2>
+            <div class="clearfix"></div>
+        </div>
+        <div class="x_content">
+            <table class="table table-striped projects">
+                <thead>
+                <tr>
+                    <th>项目名称</th>
+                    <th>创建时间</th>
+                    <th>人员</th>
+                    <th>进度</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody th:unless="${#lists.isEmpty(projectInfoList)}">
+                <tr th:each="projectInfo:${projectInfoList}">
+                    <td th:text="${projectInfo.getProject().getAbbreviation()}">项目简称</td>
+                    <td th:text="${projectInfo.getProject().getCreateTime().toString().substring(0,16)}">创建时间</td>
+                    <td>
+                        <ul class="list-inline" >
+                            <li th:each="roleInProject:${projectInfo.getRoleInProjectList()}">
+                                <img src="/images/user.png" class="avatar" alt="Avatar" th:title="${roleInProject.getRole()} + ': ' + ${roleInProject.getUsername()}">
+                            </li>
+                        </ul>
+                    </td>
+                    <td class="project_progress">
+                        <div class="progress progress_sm">
+                            <div class="progress-bar bg-green" role="progressbar" aria-valuemin="0" aria-valuemax="100" th:style="'width: '+ ${projectInfo.getProgress()} +'%;'"></div>
+                        </div>
+                        <small><span th:inline="text">已完成[[${projectInfo.getProgress()}]]%</span></small>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-success btn-xs"><span th:inline="text">[[${projectInfo.getProject().getStatus()}]]</span></button>
+                    </td>
+                    <td>
+                        <a th:href="'/project/change_project?projectId='+${projectInfo.getProject().getId()}" class="btn btn-info btn-xs"> 进入项目 </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--end change_project-->
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Role Management</title>
+</head>
+<body>
+<!--create_user-->
+<div th:fragment="set_roles">
+    <div class="x_panel">
+        <div class="x_content">
+            <br/>
+            <form class="form-horizontal form-label-left" id="form_set_roles" name="form_set_roles" th:action="@{/roles/set/submit}" method="post">
+                <!--<div class="row form-group col-md-12 col-sm-12 col-xs-12">-->
+                    <!--<label class="control-label col-md-1 col-sm-12 col-xs-12">项目经理</label>-->
+                    <!--<div class="col-md-10 col-sm-12 col-xs-12">-->
+                        <!--<select class="form-control select2-theme" id="projectManager" name="projectManager" multiple="multiple" title="单击弹出人员列表">-->
+                            <!--<optgroup th:each="userGroup : ${userGroupList}" th:label="'组织机构id: ' + ${userGroup.get(0).getOrganizationId()}">-->
+                                <!--<option th:each="user : ${userGroup}" th:value="${user.getUsername()}" th:text="${user.getName()}" th:title="${user.getRole()}"></option>-->
+                            <!--</optgroup>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="row form-group col-md-12 col-sm-12 col-xs-12">
+                    <label class="control-label col-md-1 col-sm-12 col-xs-12">参试人员</label>
+                    <div class="col-md-10 col-sm-12 col-xs-12" >
+                        <select class="form-control select2-theme" id="doctor" name="doctor" multiple="multiple" title="单击弹出人员列表">
+                            <optgroup th:each="doctorGroup : ${doctorGroupList}" th:unless="${#lists.isEmpty(doctorGroup)}" th:label="'组织机构id: ' + ${doctorGroup.get(0).getOrganizationId()}">
+                                <option th:each="user : ${doctorGroup}" th:value="${user.getUsername()}" th:text="${user.getName()}" th:title="${user.getRole()}"></option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                <div class="row form-group col-md-12 col-sm-12 col-xs-12">
+                    <label class="control-label col-md-1 col-sm-12 col-xs-12">统计员</label>
+                    <div class="col-md-10 col-sm-12 col-xs-12">
+                        <select class="form-control select2-theme" id="statistician" name="statistician" multiple="multiple" title="单击弹出人员列表">
+                            <optgroup th:each="userGroup : ${userGroupList}" th:unless="${#lists.isEmpty(userGroup)}" th:label="'组织机构id: ' + ${userGroup.get(0).getOrganizationId()}">
+                                <option th:each="user : ${userGroup}" th:value="${user.getUsername()}" th:text="${user.getName()}" th:title="${user.getRole()}"></option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12 col-sm-12 col-xs-12 col-md-offset-5">
+                        <button type="submit" class="btn btn-success" onclick="Role.SetRolesSubmit()">设置</button>
+                        <!--<button type="reset" class="btn btn-primary">重置</button>-->
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--end create_user-->
+</body>
+</html>
